@@ -1,0 +1,33 @@
+spring:
+  jpa:
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        default_schema: myblog
+    hibernate:
+      ddl-auto: validate
+    show-sql: 'false'
+    open-in-view: 'false'
+  flyway:
+    schemas: myblog
+    baseline-on-migrate: 'true'
+    user: postgres
+    password: Dakhung0801@
+    locations: classpath:db/migration
+    url: jdbc:postgresql://localhost:5555/accountservice
+    table: flyway_schema_history_account
+  datasource:
+    password: Dakhung0801@
+    driver-class-name: org.postgresql.Driver
+    username: postgres
+    url: jdbc:postgresql://localhost:5555/accountservice
+    hikari:
+      schema: myblog
+  cloud:
+    config:
+      enabled: 'false'
+grpc:
+  server:
+    port: '8102'
+server:
+  port: '8002'

@@ -1,0 +1,19 @@
+blog:
+  grpc:
+    client:
+      account:
+        port: '8102'
+        host: localhost
+        message:
+          size: '25'
+server:
+  port: ${PORT}
+spring:
+  cloud:
+    config:
+      enabled: 'false'
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: http://auth-server:9000

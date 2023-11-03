@@ -1,0 +1,11 @@
+spring:
+  cloud:
+    config:
+      profile: default
+      name: gateway-service
+      label: master
+      fail-fast: 'true'
+  config:
+    import: optional:configserver:${CLOUD_CONFIG_URL}
+server:
+  port: ${PORT}

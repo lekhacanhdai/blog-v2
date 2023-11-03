@@ -1,0 +1,14 @@
+spring:
+  cloud:
+    config:
+      profile: default
+      name: account-service
+      label: master
+      fail-fast: 'true'
+  config:
+    import: optional:configserver:${CLOUD_CONFIG_URL}
+grpc:
+  server:
+    port: ${GRPC_PORT}
+server:
+  port: ${PORT}
