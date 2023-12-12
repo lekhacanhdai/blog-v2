@@ -52,12 +52,11 @@ public class AuthorizationServerConfig{
                 .clientId("blog-app")
                 .clientSecret("{noop}bl0g@pp")
                 .clientAuthenticationMethod(ClientAuthenticationMethod.CLIENT_SECRET_BASIC)
-                .authorizationGrantType(AuthorizationGrantType.CLIENT_CREDENTIALS)
+                .authorizationGrantType(AuthorizationGrantType.AUTHORIZATION_CODE)
                 .authorizationGrantType(AuthorizationGrantType.REFRESH_TOKEN)
                 .scope(OidcScopes.OPENID)
                 .scope("blog.read")
-                .redirectUri("http://localhost:8003/login/oauth2/code/blogapp-client-oidc")
-                .redirectUri("http://127.0.0.1:8003/authorized")
+                .redirectUri("https://172.0.0.1:9000/hello")
                 .build();
         return new InMemoryRegisteredClientRepository(registeredClient);
     }
@@ -68,7 +67,7 @@ public class AuthorizationServerConfig{
         OAuth2AuthorizationServerConfiguration.applyDefaultSecurity(http);
         http.getConfigurer(OAuth2AuthorizationServerConfigurer.class)
                 .oidc(Customizer.withDefaults());
-        http.exceptionHandling((exceptions) ->
+        http.exceptionHandling(exceptions ->
                 exceptions.defaultAuthenticationEntryPointFor(
                         new LoginUrlAuthenticationEntryPoint("/login"),
                         new MediaTypeRequestMatcher(MediaType.TEXT_HTML)
@@ -89,7 +88,7 @@ public class AuthorizationServerConfig{
     public UserDetailsService userDetailsService() {
         UserDetails userDetails = User.builder()
                 .username("admin")
-                .password("123456")
+                .password("{noop}123456")
                 .roles("ADMIN")
                 .build();
 

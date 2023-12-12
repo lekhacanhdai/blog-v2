@@ -24,3 +24,8 @@ spring:
                 - "openid"
                 - "profile"
             require-authorization-consent: true
+logging:
+  level:
+    org:
+      springframework:
+        web: DEBUG
