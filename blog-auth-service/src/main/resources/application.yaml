@@ -24,6 +24,8 @@ spring:
                 - "openid"
                 - "profile"
             require-authorization-consent: true
+  application:
+    name: auth-server
 logging:
   level:
     org:
