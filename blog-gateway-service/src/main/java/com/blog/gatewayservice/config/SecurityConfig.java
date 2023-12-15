@@ -17,6 +17,8 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception{
         http.authorizeHttpRequests(authz -> authz
+                        .requestMatchers(HttpMethod.GET, "/roles")
+                        .hasAnyAuthority("SCOPE_blog.read")
                 .anyRequest()
                 .fullyAuthenticated())
                 .oauth2ResourceServer(oauth2 -> oauth2.jwt(Customizer
