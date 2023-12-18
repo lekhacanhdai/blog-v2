@@ -6,6 +6,7 @@ import com.blog.gatewayservice.payload.response.ListDTO;
 import com.blog.gatewayservice.payload.response.Response;
 import com.blog.gatewayservice.payload.response.RoleDTO;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -23,6 +24,7 @@ public class AccountController {
 
     @GetMapping("roles")
     public Response<ListDTO<RoleDTO>> listRoles(){
+        var context = SecurityContextHolder.getContext().getAuthentication();
         var roles = accountGrpcClientService.listRole();
         if (roles.getSuccess()){
             return accountGrpcResponseConverter.asSuccessResponse(roles.getData());
