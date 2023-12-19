@@ -1,5 +1,7 @@
 package com.blog.authservice.config;
 
+import com.blog.authservice.domain.repository.UserRepository;
+import com.blog.authservice.service.security.MyUserDetailsService;
 import com.nimbusds.jose.jwk.JWKSet;
 import com.nimbusds.jose.jwk.RSAKey;
 import com.nimbusds.jose.jwk.source.ImmutableJWKSet;
@@ -12,24 +14,19 @@ import org.springframework.context.annotation.Import;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
-import org.springframework.security.authentication.AuthenticationProvider;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.oauth2.core.AuthorizationGrantType;
-import org.springframework.security.oauth2.core.ClientAuthenticationMethod;
-import org.springframework.security.oauth2.core.oidc.OidcScopes;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
-import org.springframework.security.oauth2.server.authorization.client.InMemoryRegisteredClientRepository;
-import org.springframework.security.oauth2.server.authorization.client.RegisteredClient;
+import org.springframework.security.oauth2.server.authorization.client.JdbcRegisteredClientRepository;
 import org.springframework.security.oauth2.server.authorization.client.RegisteredClientRepository;
 import org.springframework.security.oauth2.server.authorization.config.annotation.web.configuration.OAuth2AuthorizationServerConfiguration;
 import org.springframework.security.oauth2.server.authorization.config.annotation.web.configurers.OAuth2AuthorizationServerConfigurer;
 import org.springframework.security.oauth2.server.authorization.settings.AuthorizationServerSettings;
-import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.LoginUrlAuthenticationEntryPoint;
 import org.springframework.security.web.util.matcher.MediaTypeRequestMatcher;
@@ -49,27 +46,33 @@ import java.util.UUID;
 @Configuration
 @EnableWebSecurity
 @Import(OAuth2AuthorizationServerConfiguration.class)
+@RequiredArgsConstructor
 public class AuthorizationServerConfig{
+
+    private final UserRepository userRepository;
     @Bean
-    public RegisteredClientRepository registeredClientRepository(){
-        RegisteredClient registeredClient = RegisteredClient.withId(UUID.randomUUID().toString())
-                .clientId("blog-app")
-                .clientSecret("{noop}bl0g@pp")
-                .clientAuthenticationMethod(ClientAuthenticationMethod.CLIENT_SECRET_BASIC) // Support GET TOKEN
-                .clientAuthenticationMethod(ClientAuthenticationMethod.CLIENT_SECRET_POST) // Support introspect token Oauth2 Server
-                .authorizationGrantType(AuthorizationGrantType.AUTHORIZATION_CODE)
-                .authorizationGrantType(AuthorizationGrantType.REFRESH_TOKEN)
-                .scope(OidcScopes.OPENID)
-                .scope("blog.read")
-                .redirectUri("https://172.0.0.1:9000/hello")
-                .build();
-        return new InMemoryRegisteredClientRepository(registeredClient);
+    public RegisteredClientRepository registeredClientRepository(JdbcTemplate jdbcTemplate){
+//        FIXME: INIT CLIENT
+//        RegisteredClient registeredClient = RegisteredClient.withId(UUID.randomUUID().toString())
+//                .clientId("blog-app")
+//                .clientSecret(passwordEncoder().encode("bl0g@pp"))
+//                .clientAuthenticationMethod(ClientAuthenticationMethod.CLIENT_SECRET_BASIC) // Support GET TOKEN
+//                .clientAuthenticationMethod(ClientAuthenticationMethod.CLIENT_SECRET_POST) // Support introspect token Oauth2 Server
+//                .authorizationGrantType(AuthorizationGrantType.AUTHORIZATION_CODE)
+//                .authorizationGrantType(AuthorizationGrantType.REFRESH_TOKEN)
+//                .scope(OidcScopes.OPENID)
+//                .scope("blog.read")
+//                .redirectUri("https://172.0.0.1:9000/hello")
+//                .build();
+
+//        RegisteredClientRepository registeredRepository =
+//        registeredRepository.save(registeredClient);
+        return  new JdbcRegisteredClientRepository(jdbcTemplate);
     }
 
     @Bean
     @Order(1)
     public SecurityFilterChain authorizationServerSecurityFilterChain(HttpSecurity http) throws Exception{
-        AuthenticationProvider authenticationProvider = new CustomAuthenticationProvider();
         OAuth2AuthorizationServerConfigurer authorizationServerConfigurer =
                 new OAuth2AuthorizationServerConfigurer();
         RequestMatcher endpointsMatcher = authorizationServerConfigurer.getEndpointsMatcher();
@@ -79,14 +82,12 @@ public class AuthorizationServerConfig{
                         authorize.anyRequest().authenticated()
                 )
                 .csrf(csrf -> csrf.ignoringRequestMatchers(endpointsMatcher))
-                .apply(authorizationServerConfigurer).oidc(Customizer.withDefaults());
+                .apply(authorizationServerConfigurer)
+                .oidc(Customizer.withDefaults());
 
         authorizationServerConfigurer.tokenIntrospectionEndpoint(
-                introspection -> introspection.authenticationProvider(authenticationProvider)
+                i -> i.introspectionResponseHandler(new CustomIntrospectionResponseHandler(userRepository))
         );
-//        OAuth2AuthorizationServerConfiguration.applyDefaultSecurity(http);
-//        http.getConfigurer(OAuth2AuthorizationServerConfigurer.class)
-//                .oidc(Customizer.withDefaults());
         http.exceptionHandling(exceptions ->
                 exceptions.defaultAuthenticationEntryPointFor(
                         new LoginUrlAuthenticationEntryPoint("/login"),
@@ -106,15 +107,19 @@ public class AuthorizationServerConfig{
                 .formLogin(Customizer.withDefaults());
         return http.build();
     }
+
     @Bean
     public UserDetailsService userDetailsService() {
-        UserDetails userDetails = User.builder()
-                .username("admin")
-                .password("{noop}123456")
-                .roles("ADMIN")
-                .build();
+//        FIXME: INIT USER
+//        UserEntity userEntity = new UserEntity();
+//        userEntity.setUsername("admin");
+//        userEntity.setPassword(passwordEncoder().encode("123456"));
+//        userEntity.setEmail("khacdai0801@gmail.com");
+//        userEntity.setIsActive(Boolean.TRUE);
+//        userEntity.setRole(roleRepository.findById(1L).get());
+//        userRepository.save(userEntity);
 
-        return new InMemoryUserDetailsManager(userDetails);
+        return new MyUserDetailsService(userRepository);
     }
 
     @Bean
@@ -154,5 +159,10 @@ public class AuthorizationServerConfig{
     public AuthorizationServerSettings authorizationServerSettings() {
         return AuthorizationServerSettings.builder()
                 .build();
+    }
+
+    @Bean
+    public PasswordEncoder passwordEncoder(){
+        return new BCryptPasswordEncoder();
     }
 }

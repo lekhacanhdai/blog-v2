@@ -6,11 +6,11 @@ spring:
         default_schema: myblog
     hibernate:
       ddl-auto: validate
-    show-sql: 'false'
-    open-in-view: 'false'
+    show-sql: false
+    open-in-view: false
   flyway:
     schemas: myblog
-    baseline-on-migrate: 'true'
+    baseline-on-migrate: true
     user: postgres
     password: Dakhung0801@
     locations: classpath:db/migration

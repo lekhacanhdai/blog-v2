@@ -26,6 +26,22 @@ spring:
             require-authorization-consent: true
   application:
     name: auth-server
+  jpa:
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        default_schema: myblog
+    hibernate:
+      ddl-auto: validate
+    show-sql: false
+    open-in-view: false
+  datasource:
+    password: Dakhung0801@
+    driver-class-name: org.postgresql.Driver
+    username: postgres
+    url: jdbc:postgresql://localhost:5555/accountservice
+    hikari:
+      schema: myblog
 logging:
   level:
     org:
