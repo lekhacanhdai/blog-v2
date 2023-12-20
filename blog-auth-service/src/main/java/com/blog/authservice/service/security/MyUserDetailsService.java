@@ -1,7 +1,7 @@
 package com.blog.authservice.service.security;
 
 import com.blog.authservice.domain.mapper.UserMapper;
-import com.blog.authservice.domain.repository.UserRepository;
+import com.blog.authservice.domain.repository.jpa.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;

@@ -1,6 +1,6 @@
 package com.blog.authservice.config;
 
-import com.blog.authservice.domain.repository.UserRepository;
+import com.blog.authservice.domain.repository.jpa.UserRepository;
 import com.blog.authservice.service.security.MyUserDetailsService;
 import com.nimbusds.jose.jwk.JWKSet;
 import com.nimbusds.jose.jwk.RSAKey;
@@ -86,7 +86,7 @@ public class AuthorizationServerConfig{
                 .oidc(Customizer.withDefaults());
 
         authorizationServerConfigurer.tokenIntrospectionEndpoint(
-                i -> i.introspectionResponseHandler(new CustomIntrospectionResponseHandler(userRepository))
+                i -> i.introspectionResponseHandler(new CustomIntrospectionResponseHandler())
         );
         http.exceptionHandling(exceptions ->
                 exceptions.defaultAuthenticationEntryPointFor(
