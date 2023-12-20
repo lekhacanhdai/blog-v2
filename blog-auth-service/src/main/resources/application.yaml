@@ -44,6 +44,8 @@ spring:
       schema: myblog
 logging:
   level:
-    org:
-      springframework:
-        web: DEBUG
+    root: info
+
+redis:
+  host: localhost
+  port: 6380

@@ -1,8 +1,5 @@
 package com.blog.authservice.config;
 
-import com.blog.authservice.domain.entity.UserEntity;
-import com.blog.authservice.domain.repository.UserRepository;
-import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -25,11 +22,6 @@ import java.io.IOException;
 public class CustomIntrospectionResponseHandler implements AuthenticationSuccessHandler {
     private final HttpMessageConverter<OAuth2TokenIntrospection> tokenIntrospectionHttpResponseConverter =
             new OAuth2TokenIntrospectionHttpMessageConverter();
-    private UserRepository userRepository;
-
-    public CustomIntrospectionResponseHandler(UserRepository userRepository) {
-        this.userRepository = userRepository;
-    }
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {

@@ -1,4 +1,4 @@
-package com.blog.authservice.domain.repository;
+package com.blog.authservice.domain.repository.jpa;
 
 import com.blog.authservice.domain.entity.UserEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
