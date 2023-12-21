@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.data.redis.core.RedisHash;
+import org.springframework.security.oauth2.server.authorization.OAuth2Authorization;
 
 /**
  * @author dai.le-anh
@@ -19,5 +20,5 @@ import org.springframework.data.redis.core.RedisHash;
 public class TokenKey {
     @Id
     private String id;
-    private String token;
+    private OAuth2Authorization auth;
 }
