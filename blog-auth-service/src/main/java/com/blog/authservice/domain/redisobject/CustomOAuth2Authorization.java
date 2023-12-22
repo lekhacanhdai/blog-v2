@@ -4,12 +4,11 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.springframework.security.oauth2.core.AuthorizationGrantType;
-import org.springframework.security.oauth2.core.OAuth2Token;
 import org.springframework.security.oauth2.server.authorization.OAuth2Authorization;
 import org.springframework.security.oauth2.server.authorization.util.SpringAuthorizationServerVersion;
 
 import java.io.Serializable;
+import java.sql.Timestamp;
 import java.util.Map;
 import java.util.Set;
 
@@ -23,29 +22,38 @@ import java.util.Set;
 @AllArgsConstructor
 @NoArgsConstructor
 public class CustomOAuth2Authorization implements Serializable {
-    private static final long serialVersionUID = SpringAuthorizationServerVersion.SERIAL_VERSION_UID;
     private String id;
     private String registeredClientId;
     private String principalName;
-    private AuthorizationGrantType authorizationGrantType;
+    private String authorizationGrantType;
     private Set<String> authorizedScopes;
+    private String state;
     private Map<String, Object> attributes;
-    Map<String, OAuth2Authorization.Token<?>> tokens;
-
-
-    public static CustomOAuth2Authorization fromOAuth2Authorization(OAuth2Authorization oAuth2Authorization, Class<?> authClass) {
-        CustomOAuth2Authorization custom = new CustomOAuth2Authorization();
-        custom.setId(oAuth2Authorization.getId());
-        custom.setAuthorizedScopes(oAuth2Authorization.getAuthorizedScopes());
-        custom.setRegisteredClientId(oAuth2Authorization.getRegisteredClientId());
-        custom.setPrincipalName(oAuth2Authorization.getPrincipalName());
-        custom.setAuthorizationGrantType(oAuth2Authorization.getAuthorizationGrantType());
-        custom.setAttributes(oAuth2Authorization.getAttributes());
-        if (authClass.toString().endsWith("OAuth2AuthorizationCode")) {
-            custom.getTokens().put(authClass.getName(), oAuth2Authorization.getToken(authClass.getName()));
-        }
-
-        return custom;
-    }
+    private String authorizationCodeValue;
+    private Timestamp authorizationCodeIssuedAt;
+    private Timestamp authorizationCodeExpiredAt;
+    private Map<String, Object> authorizationCodeMetadata;
+    private String accessTokenValue;
+    private Timestamp accessTokenIssuedAt;
+    private Timestamp accessTokenExpiredAt;
+    private String accessTokenType;
+    private String accessTokenScopes;
+    private Map<String, Object> accessTokenMetadata;
+    private String oIDCIdTokenValue;
+    private Timestamp oIDCIdTokenIssuedAt;
+    private Timestamp oIDCIdTokenExpiredAt;
+    private Map<String, Object> oIDCIdTokenMetadata;
+    private String refreshTokenValue;
+    private Timestamp refreshTokenIssuedAt;
+    private Timestamp refreshTokenExpiredAt;
+    private Map<String, Object> refreshTokenMetadata;
+    private String userCodeValue;
+    private Timestamp userCodeIssuedAt;
+    private Timestamp userCodeExpiredAt;
+    private Map<String, Object> userCodeMetadata;
+    private String deviceCodeValue;
+    private Timestamp deviceCodeIssuedAt;
+    private Timestamp deviceCodeExpiredAt;
+    private Map<String, Object> deviceCodeMetadata;
 
 }

@@ -53,8 +53,9 @@ public class AuthorizationServerConfig{
 
     private final UserRepository userRepository;
     private final TokenRedisRepository tokenRedisRepository;
+    private final JdbcTemplate jdbcTemplate;
     @Bean
-    public RegisteredClientRepository registeredClientRepository(JdbcTemplate jdbcTemplate){
+    public RegisteredClientRepository registeredClientRepository(){
 //        FIXME: INIT CLIENT
 //        RegisteredClient registeredClient = RegisteredClient.withId(UUID.randomUUID().toString())
 //                .clientId("blog-app")
@@ -171,6 +172,6 @@ public class AuthorizationServerConfig{
 
     @Bean
     public OAuth2AuthorizationService auth2AuthorizationService(){
-        return new CustomOAuth2AuthorizationService(tokenRedisRepository);
+        return new CustomOAuth2AuthorizationService(tokenRedisRepository, registeredClientRepository());
     }
 }
