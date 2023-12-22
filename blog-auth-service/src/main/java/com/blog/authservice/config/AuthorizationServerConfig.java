@@ -1,6 +1,7 @@
 package com.blog.authservice.config;
 
 import com.blog.authservice.domain.repository.jpa.UserRepository;
+import com.blog.authservice.domain.repository.redis.TokenRedisRepository;
 import com.blog.authservice.service.security.MyUserDetailsService;
 import com.nimbusds.jose.jwk.JWKSet;
 import com.nimbusds.jose.jwk.RSAKey;
@@ -22,6 +23,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
+import org.springframework.security.oauth2.server.authorization.OAuth2AuthorizationService;
 import org.springframework.security.oauth2.server.authorization.client.JdbcRegisteredClientRepository;
 import org.springframework.security.oauth2.server.authorization.client.RegisteredClientRepository;
 import org.springframework.security.oauth2.server.authorization.config.annotation.web.configuration.OAuth2AuthorizationServerConfiguration;
@@ -50,6 +52,7 @@ import java.util.UUID;
 public class AuthorizationServerConfig{
 
     private final UserRepository userRepository;
+    private final TokenRedisRepository tokenRedisRepository;
     @Bean
     public RegisteredClientRepository registeredClientRepository(JdbcTemplate jdbcTemplate){
 //        FIXME: INIT CLIENT
@@ -164,5 +167,10 @@ public class AuthorizationServerConfig{
     @Bean
     public PasswordEncoder passwordEncoder(){
         return new BCryptPasswordEncoder();
+    }
+
+    @Bean
+    public OAuth2AuthorizationService auth2AuthorizationService(){
+        return new CustomOAuth2AuthorizationService(tokenRedisRepository);
     }
 }
